@@ -1,0 +1,13 @@
+*.bak
+*.zip
+*.log
+*.doc
+*.txt
+*.tgz
+*.~vsdx
+keys_*.php
+test_data.html
+vendor/
+docs/
+SOLR/
+WMS_export/

@@ -23,11 +23,6 @@ var editorProperties =
 var query = document.location.search;
 
 editorProperties.startval ={};
-/*
-if (query.includes('item_barcode=')) {
-  editorProperties.startval.item_barcode = item_barcode;
-}
-*/
 if (query.includes('user_barcode=')) {
   editorProperties.startval.user_barcode = user_barcode;
 }
@@ -38,26 +33,31 @@ editor.on('ready',function() {
 
   bc_list = new Array();
   $("[name = 'root[item_barcode]']").focus();
+  $('#list').html("");
 
   editor.watch('root.item_barcode', function() {
-    // Do something
     val = editor.getEditor('root.item_barcode').getValue();
+    val = val.trim();
     if (val.length > 0) {
       $('#list').append(val + '<br/>');
       bc_list.push(val);
     }
-    editor.setValue({item_barcode: ""});
+    editor.setValue({user_barcode: user_barcode, item_barcode: ""});
     $("[name = 'root[item_barcode]']").focus();
   });
 
 
   // Hook up the submit button to log to the console
   $('#submit').on('click',function() {
+    $('#res').html("");
 	  user_barcode = editor.getEditor('root.user_barcode').getValue();
-	  item_barcode = editor.getEditor('root.item_barcode').getValue();
-    if ((user_barcode.length > 0) && (bc_list.length > 0))  {
+	  //alert('|'+user_barcode + '|--|' + bc_list+ '|');
+    if (user_barcode.length == 0) {
+      msg = "Please scan the barcode of a valid library card.";
+      $('#res').html(msg);
+    }
+    else {
       //empty feedback div
-      $('#res').html("");
 
       //Validate
       var errors = editor.validate();

@@ -34,7 +34,8 @@ var editor = new JSONEditor(document.getElementById('editor'),editorProperties);
 editor.on('ready',function() {
   bc_list = new Array();
   $("[name = 'root[item_barcode]']").focus();
-
+  $('#list').html("");
+  
   editor.watch('root.item_barcode', function() {
     // Do something
     val = editor.getEditor('root.item_barcode').getValue();

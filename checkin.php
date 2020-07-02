@@ -1,20 +1,27 @@
 <?php
-  //for TWIG templating:
-  require_once 'vendor/autoload.php';
-  //for lookups, holds, cancel holds and renewal in WMS
-  require_once 'NCIP_Staff_Service.php';
+//for TWIG templating:
+require_once 'vendor/autoload.php';
+//for lookups, holds, cancel holds and renewal in WMS
+require_once 'NCIP_Staff_Service.php';
 
-  $debug = FALSE;
-  //add &debug to the url for getting output from library classes that use API's:
-  if (array_key_exists('debug',$_GET)) $debug = TRUE;
-  
-  //classes for Patrons and circulation services
-  $ncip = new NCIP_Staff_Service('keys_ncip.php');
-  
-  //if this script is called with an url parameter 'bc_list' 
-  $bc_list = null;
-  if (array_key_exists('bc_list',$_GET)) $bc_list = $_GET['bc_list'];
-  
+$debug = FALSE;
+//add &debug to the url for getting output from library classes that use API's:
+if (array_key_exists('debug',$_GET)) $debug = TRUE;
+
+//classes for Patrons and circulation services
+$ncip = new NCIP_Staff_Service('keys_ncip.php');
+
+//if this script is called with an url parameter 'bc_list'
+$bc_list = null;
+$barcodes = [];
+if (array_key_exists('bc_list',$_GET)) {
+  $bc_list = $_GET['bc_list'];
+  $barcodes_raw = explode(',',$bc_list);
+  foreach ($barcodes_raw as $c) {
+    if ((strlen($c) > 0) && (!in_array($c,$barcodes))) $barcodes[] = $c;
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,36 +41,71 @@
   <body>
     <a href="index.html">Back to menu</a>
     <div id="editor"></div>
-    <div id="list"></div>
-    
+    <div id="list">
+      <?php
+      echo implode('<br/>',$barcodes);
+      ?>
+    </div>
+
     <div id="buttons">
       <button id='submit'>Check In</button>
       <button id='empty'>Empty form</button>
     </div>
     <div id="res">
       <?php
-        if (!is_null($bc_list)) {
-          $barcodes = explode(',',$bc_list);
-          foreach ($barcodes as $c) { 
-            $ncip->checkin_barcode($c);
-            echo $ncip->response_str('html');
+      if (!is_null($bc_list)) {
+        foreach ($barcodes as $c) {
+          if ($ncip->checkin_barcode($c)) {
+
+            if (array_key_exists("NCIPMessage",$ncip->response_json)) {
+              if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0])) {
+                if ($debug) echo $ncip->response_str('html');
+              }
+              else if (array_key_exists("CheckInItemResponse",$ncip->response_json["NCIPMessage"][0])) {
+                //a real response on check in, but might have a problem
+                //response_json["NCIPMessage"][0]["CheckInItemResponse"][0]["Problem"][0]["ProblemType"][0] == "Unknown Item"
+                if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0]["CheckInItemResponse"][0])) {
+                  if (strpos($ncip->response_json["NCIPMessage"][0]["CheckInItemResponse"][0]["Problem"][0]["ProblemType"][0], "Unknown Item") !== FALSE) {
+                    echo("Unknown item barcode: $c.<br/>");
+                  }
+                  else {
+                    if ($debug) echo $ncip->response_str('html');
+                  }
+                }
+                else {
+                  //a real response on check out and no problem
+                  echo $ncip->response_str('html');
+                }
+              }
+              else {
+                //situation cannot happen?
+                if ($debug) echo $ncip->response_str('html');
+              }
+            }
+            else {
+              //serious error: no response from server
+            }
+          }
+          else {
+            //serious error: no response
           }
         }
+      }
       ?>
     </div>
     <?php
-      //show information from library classes
-      //use echo $patron; and/or echo $circulation; for even more info
-      if ($debug) { ?>
-    <div>
-      NCIP:
-      <pre>
-        <?php echo $ncip;?>
-      </pre>
-    </div>
-    <?php } ?>
+    //show information from library classes
+    //use echo $patron; and/or echo $circulation; for even more info
+    if ($debug) { ?>
+      <div>
+        NCIP:
+        <pre>
+          <?php echo $ncip;?>
+        </pre>
+      </div>
+      <?php } ?>
 
-    <script type="text/javascript" src="js/checkinForm.js"></script>
-  </body>
+      <script type="text/javascript" src="js/checkinForm.js"></script>
+    </body>
 
-</html>
+  </html>

@@ -52,10 +52,10 @@ if (array_key_exists('user_barcode',$_GET) && array_key_exists('bc_list',$_GET))
     <div id="res">
       <?php
       if ($user_barcode == null) {
-        if ($bc_list != null) echo("No user barcode given. Please scan a valid library card.<br/>");
+        if ($bc_list != null) echo $m['no_user'];
       }
       else if ($bc_list == null) {
-        echo("No items scanned.<br/>");
+        echo $m['no_items'];
       }
       else {
         //checkout

@@ -7,6 +7,9 @@ $m = array(
     'in_ok' => "Item is checked in.<br/>",
     'item_unknown' => "Unknown item barcode.<br/>",
     'user_unknown' => "Unknown user barcode. Please scan a valid library card.<br/>",
+    'no_user' => "No user barcode given. Please scan a valid library card.<br/>",
+    'no_items' => "No items scanned.<br/>",
+    
 );
 
 ?>

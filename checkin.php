@@ -3,6 +3,7 @@
 require_once 'vendor/autoload.php';
 //for lookups, holds, cancel holds and renewal in WMS
 require_once 'NCIP_Staff_Service.php';
+require_once 'messages.php';
 
 $debug = FALSE;
 //add &debug to the url for getting output from library classes that use API's:
@@ -18,7 +19,7 @@ if (array_key_exists('bc_list',$_GET)) {
   $bc_list = $_GET['bc_list'];
   $barcodes_raw = explode(',',$bc_list);
   foreach ($barcodes_raw as $c) {
-    if ((strlen($c) > 0) && (!in_array($c,$barcodes))) $barcodes[] = $c;
+    if ((strlen($c) > 0) && (!in_array($c,$barcodes))) $barcodes[] = trim($c);
   }
 }
 
@@ -59,35 +60,47 @@ if (array_key_exists('bc_list',$_GET)) {
 
             if (array_key_exists("NCIPMessage",$ncip->response_json)) {
               if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0])) {
+                //some problem
+                echo $m['in_not_av'];
                 if ($debug) echo $ncip->response_str('html');
+                break;
               }
               else if (array_key_exists("CheckInItemResponse",$ncip->response_json["NCIPMessage"][0])) {
                 //a real response on check in, but might have a problem
                 //response_json["NCIPMessage"][0]["CheckInItemResponse"][0]["Problem"][0]["ProblemType"][0] == "Unknown Item"
                 if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0]["CheckInItemResponse"][0])) {
                   if (strpos($ncip->response_json["NCIPMessage"][0]["CheckInItemResponse"][0]["Problem"][0]["ProblemType"][0], "Unknown Item") !== FALSE) {
-                    echo("Unknown item barcode: $c.<br/>");
+                    echo $m['item_unknown']; 
                   }
                   else {
+                    //other problem
+                    echo $m['in_not_av'];
                     if ($debug) echo $ncip->response_str('html');
+                    break;
                   }
                 }
                 else {
                   //a real response on check out and no problem
-                  echo $ncip->response_str('html');
+                  echo $m['in_ok'];
+                  if ($debug) echo $ncip->response_str('html');
                 }
               }
               else {
                 //situation cannot happen?
+                echo $m['in_not_av'];
                 if ($debug) echo $ncip->response_str('html');
               }
             }
             else {
               //serious error: no response from server
+              echo $m['in_not_av'];
+              break;
             }
           }
           else {
-            //serious error: no response
+            //serious error: nothing happened on WMS server
+            echo $m['in_not_av'];
+            break;
           }
         }
       }

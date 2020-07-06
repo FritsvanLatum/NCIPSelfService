@@ -1,6 +1,8 @@
 <?php
 require_once 'vendor/autoload.php';
 require_once 'NCIP_Staff_Service.php';
+require_once 'messages.php';
+
 $debug = TRUE;
 if (array_key_exists('debug',$_GET)) $debug = TRUE;
 
@@ -13,11 +15,11 @@ $bc_list = null;
 $barcodes = [];
 if (array_key_exists('user_barcode',$_GET) && array_key_exists('bc_list',$_GET)) {
   //get user_barcode
-  $user_barcode = $_GET['user_barcode'];
+  $user_barcode = trim($_GET['user_barcode']);
   $bc_list = $_GET['bc_list'];
   $barcodes_raw = explode(',',$bc_list);
   foreach ($barcodes_raw as $c) {
-    if ((strlen($c) > 0) && (!in_array($c,$barcodes))) $barcodes[] = $c;
+    if ((strlen($c) > 0) && (!in_array($c,$barcodes))) $barcodes[] = trim($c);
   }
 }
 ?>
@@ -63,40 +65,50 @@ if (array_key_exists('user_barcode',$_GET) && array_key_exists('bc_list',$_GET))
               if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0])) {
                 //response_json["NCIPMessage"][0]["Problem"][0]["ProblemDetail"][0] = "java.lang.IllegalArgumentException: Unknown user barcode,123"
                 if (strpos($ncip->response_json["NCIPMessage"][0]["Problem"][0]["ProblemDetail"][0], "Unknown user barcode") !== FALSE) {
-                  echo("Unknown user barcode. Please scan a valid library card.<br/>");
-                  break;
+                  echo $m['user_unknown'];
                 }
                 else {
+                  //other problem
+                  echo $m['out_not_av'];
                   if ($debug) echo $ncip->response_str('html');
                 }
+                break;
               }
               else if (array_key_exists("CheckOutItemResponse",$ncip->response_json["NCIPMessage"][0])) {
                 //a real response on check out, but might have a problem
                 //response_json["NCIPMessage"][0]["CheckOutItemResponse"][0]["Problem"][0]["ProblemType"][0] == "Unknown Item"
                 if (array_key_exists("Problem",$ncip->response_json["NCIPMessage"][0]["CheckOutItemResponse"][0])) {
                   if (strpos($ncip->response_json["NCIPMessage"][0]["CheckOutItemResponse"][0]["Problem"][0]["ProblemType"][0], "Unknown Item") !== FALSE) {
-                    echo("Unknown item barcode: $c.<br/>");
+                    echo $m['item_unknown']; 
                   }
                   else {
+                    //other problem
+                    echo $m['out_not_av'];
                     if ($debug) echo $ncip->response_str('html');
+                    break;
                   }
                 }
                 else {
                   //a real response on check out and no problem
-                  echo $ncip->response_str('html');
+                  echo $m['out_ok'];
+                  if ($debug) echo $ncip->response_str('html');
                 }
               }
               else {
                 //situation cannot happen?
+                echo $m['out_not_av'];
                 if ($debug) echo $ncip->response_str('html');
               }
             }
             else {
               //serious error: no response from server
+              echo $m['out_not_av'];
             }
           }
           else {
             //serious error: nothing happened on WMS server
+            echo $m['out_not_av'];
+            break;
           }
         } //end for
       }

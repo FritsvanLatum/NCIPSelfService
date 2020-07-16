@@ -16,7 +16,7 @@ if (array_key_exists('item_barcode',$_GET) && array_key_exists('patron_barcode',
     if (array_key_exists("NCIPMessage",$ncip->response_json)) {
       if (array_key_exists("CheckOutItemResponse",$ncip->response_json["NCIPMessage"][0])) {
         //must be replaced by another condition!!! 
-        if (array_key_exists("RoutingInformation",$ncip->response_json["NCIPMessage"][0]["CheckOutItemResponse"][0])) {
+        if (array_key_exists("DateDue",$ncip->response_json["NCIPMessage"][0]["CheckOutItemResponse"][0])) {
           $m = array();
           if (
                 array_key_exists("ItemOptionalFields",$ncip->response_json["NCIPMessage"][0]["CheckOutItemResponse"][0]) &&

@@ -4,7 +4,7 @@ require_once 'vendor/autoload.php';
 //for lookups in patron admin of WMS
 //require_once 'IDM_Service.php';
 //for lookups, holds, cancel holds and renewal in WMS
-require_once 'NCIP_Staff_Service.php';
+require_once 'php/NCIP_Staff_Service.php';
 
 $debug = TRUE;
 //add &debug to the url for getting output from library classes that use API's:

@@ -17,5 +17,5 @@ function message(key, f) {
   }
   
   //return the message inside a p tag
-  return '<p class="msg">' + s + '</p>';
+  return '<p id="' + key + '" class="msg">' + s + '</p>';
 }

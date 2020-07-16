@@ -12,11 +12,13 @@ jQuery(document).ready(function() {
   
   //hide 'Done' button
   jQuery('#done').css( "display", "none" );
+  jQuery('#wait').css( "visibility", "hidden" );
   
   //checks in the item and returns item information after scanning the item
   //uses NCIP library and API via ajax call
   //async: false is essential!
   function item(barcode) {
+    jQuery('#wait').css( "visibility", "visible" );
     request = jQuery.ajax({
       url: 'php/aj_checkin_one.php',
       data: {item_barcode: barcode},
@@ -36,6 +38,7 @@ jQuery(document).ready(function() {
       checkin_state = 'done';
       jQuery('#results').append(message('item_fail',[barcode]));
     });
+    jQuery('#wait').css( "visibility", "hidden" );
   }
 
   // trigger an event on any keypress on this webpage

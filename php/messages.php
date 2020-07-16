@@ -9,7 +9,8 @@ $m = array(
     'user_unknown' => "Unknown user barcode. Please scan a valid library card.<br/>",
     'no_user' => "No user barcode given. Please scan a valid library card.<br/>",
     'no_items' => "No items scanned.<br/>",
-    
+    'out_other_problem' => "Checkout not permitted, please check out at the desk.",
+    'in_other_problem' => "Checkout not permitted, please check out at the desk.",
 );
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__.'/OCLC_Service.php';
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 /**
 * A class that represents the NCIP Service

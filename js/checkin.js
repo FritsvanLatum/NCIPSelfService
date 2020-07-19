@@ -3,20 +3,26 @@ var debug = true;
 jQuery(document).ready(function() {
 
   // Variable to keep the barcode when scanned. When we scan each
-  // character is a keypress and hence we push it onto the array. Later we check
-  // the length and final char to ensure it is a carriage return - ascii code 13
-  // this will tell us if it is a scan or just someone writing on the keyboard
+  // character is a keypress and hence we push it onto the array. 
   var chars = [];
+
+  /* the 'states' are: 
+    'first_item': the first item card has to be scanned
+    'next_item':  the next item card might be scanned, the done button is showed
+    'done':       all is scanned
+  */
   var checkin_state = 'first_item';
-  jQuery("#dialog").append(message('item',[]));
-  
   //hide 'Done' button
   jQuery('#done').css( "display", "none" );
   jQuery('#wait').css( "visibility", "hidden" );
+
+  //please check in item:
+  jQuery("#dialog").append(message('item',[]));
+  
   
   //checks in the item and returns item information after scanning the item
   //uses NCIP library and API via ajax call
-  //async: false is essential!
+  //async: false is essential!?
   function item(barcode) {
     jQuery('#wait').css( "visibility", "visible" );
     request = jQuery.ajax({

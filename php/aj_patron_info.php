@@ -1,9 +1,15 @@
 <?php
 
-//for TWIG templating:
-require_once '../vendor/autoload.php';
+/* aj_patron_info.php
+/ script is used in ../js/checkout.js as a jQuery ajax call
+/ given a patron_barcode it collects the name of the patron 
+/ uses the IDM API
+/ 
+/ returns the name of the patron when it finds one
+/ or an internal service error in all other cases 
+*/
+
 require_once 'IDM_Service.php';
-require_once 'messages.php';
 
 $debug = TRUE;
 //add &debug to the url for getting output from library classes that use API's:

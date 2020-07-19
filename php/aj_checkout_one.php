@@ -1,9 +1,15 @@
 <?php
-//for TWIG templating:
-require_once '../vendor/autoload.php';
+/* aj_checkout_one.php
+/ script is used in ../js/checkout.js as a jQuery ajax call
+/ given a item_barcode it collects the the author and title
+/ uses the NCIP API
+/ 
+/ returns author and title, or one of the two or an empty string when the checkout is succesful
+/ or an internal service error in all other cases 
+*/
+
 //for lookups, holds, cancel holds and renewal in WMS
 require_once 'NCIP_Staff_Service.php';
-require_once 'messages.php';
 
 $debug = TRUE;
 //add &debug to the url for getting output from library classes that use API's:

@@ -1,17 +1,27 @@
 <?php
-//for TWIG templating:
-require_once 'vendor/autoload.php';
+/*  checkin_test.php
+/ webpage with an input elements for item barcode
+/ for TESTing checkins by library patrons
+/ shows response from the NCIP API on WMS
+/
+/ in PRODUCTION use checkin.html (has no input fields)
+
+/ script uses https://github.com/json-editor/json-editor
+/ for defining and handling forms
+*/
+
 //for lookups, holds, cancel holds and renewal in WMS
 require_once 'php/NCIP_Staff_Service.php';
 
 $debug = TRUE;
-//add &debug to the url for getting output from library classes that use API's:
+//add &debug to the url for getting more output from library classes that use API's:
 if (array_key_exists('debug',$_GET)) $debug = TRUE;
 
-//classes for Patrons and circulation services
+//classes for circulation services
 $ncip = new NCIP_Staff_Service('keys_ncip.php');
 
-//if this script is called with an url parameter 'item_barcode'
+//after the patron hits the checkin button,
+//this script reloads with an url parameter 'item_barcode'
 $item_barcode = null;
 if (array_key_exists('item_barcode',$_GET)) {
   $item_barcode = trim($_GET['item_barcode']);
@@ -33,7 +43,10 @@ if (array_key_exists('item_barcode',$_GET)) {
     <script type="text/javascript" src="js/jsoneditor.min.js"></script>
     <script type="text/javascript" src="schema/checkin_oneSchema.js"></script>
     <script>
-      <?php if ($item_barcode) echo "item_barcode = '$item_barcode';" ?>
+      <?php
+      //write little javascript for definition of variable used in js/checkin_oneForm.js (form handling)
+      if ($item_barcode) echo "item_barcode = '$item_barcode';";
+      ?>
     </script>
   </head>
 
@@ -58,14 +71,14 @@ if (array_key_exists('item_barcode',$_GET)) {
     //show information from library classes
     //use echo $patron; and/or echo $circulation; for even more info
     if ($debug) { ?>
-    <div>
-      NCIP:
-      <pre>
-        <?php echo $ncip;?>
-      </pre>
-    </div>
-    <?php } ?>
+      <div>
+        NCIP:
+        <pre>
+          <?php echo $ncip;?>
+        </pre>
+      </div>
+      <?php } ?>
 
-    <script type="text/javascript" src="js/checkin_oneForm.js"></script>
-  </body>
-</html>
+      <script type="text/javascript" src="js/checkin_oneForm.js"></script>
+    </body>
+  </html>

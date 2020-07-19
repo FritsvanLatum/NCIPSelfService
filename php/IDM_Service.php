@@ -21,9 +21,8 @@ update_patron: updates a patron in WMS
 
 */
 
-
+//base class
 require_once 'OCLC_Service.php';
-require_once '../vendor/autoload.php';
 
 /**
 * A class that represents the IDM Service

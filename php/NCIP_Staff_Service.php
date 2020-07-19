@@ -1,23 +1,22 @@
 <?php
 
-require_once __DIR__.'/OCLC_Service.php';
-require_once __DIR__.'/../vendor/autoload.php';
+//base class:
+require_once 'OCLC_Service.php';
 
 /**
 * A class that represents the NCIP Service
 */
 class NCIP_Staff_Service extends OCLC_Service {
 
-  //urls are extended in __construct
-  public $ncip_url = 'https://circ.sd00.worldcat.org/ncip';
   private $auth_url = 'http://www.worldcat.org/wskey/v2/hmac/v1';
   private $auth_method = 'GET';
   private $auth_headers = ['Accept' => 'application/json'];
 
+  public $ncip_url = 'https://circ.sd00.worldcat.org/ncip';
+  public $ncip_method = 'POST';
   public $ncip_headers = ['Accept' => 'application/xml',
                             'Content-Type'=> 'application/xml'
                             ];
-  public $ncip_method = 'POST';
 
   public $response_json = null;
   public $response_xml = null;
@@ -27,22 +26,22 @@ class NCIP_Staff_Service extends OCLC_Service {
   }
 
   public function __toString(){
-    
     //create an array and return json_encoded string
+    //returns all class variables
     $json = parent::__toString();
-    
-    $json['ncip_url'] = $this->ncip_url;
+    $json['auth_url'] = $this->ncip_url;
+    $json['auth_headers'] = $this->ncip_headers;
+    $json['auth_method'] = $this->ncip_method;
+    $json['auth_url'] = $this->ncip_url;
     $json['ncip_headers'] = $this->ncip_headers;
     $json['ncip_method'] = $this->ncip_method;
-    
     $json['response_xml'] = $this->response_xml;
     $json['response_json'] = $this->response_json;
-
     return json_encode($json, JSON_PRETTY_PRINT);
   }
 
   public function response_str($type = '') {
-    
+    //returns only the response of the API request as a json string, xml string or as xml which can be displayed in html
     if ($type == 'json') return json_encode($this->response_json, JSON_PRETTY_PRINT);  
     if ($type == 'xml') return $this->response_xml;
     if ($type == 'html') {
@@ -113,6 +112,7 @@ class NCIP_Staff_Service extends OCLC_Service {
 
   public function checkout_barcode($user_barcode, $item_barcode) {
     //WMS_NCIP
+    //gets the ncip xml template for checking out items, fills in the barcodes and send the resulting xml to the API
     $xml = file_get_contents(__DIR__.'/ncip_templates/checkout_request_template.xml');
     $xml = str_replace('{{user_barcode}}', $user_barcode , $xml);
     $xml = str_replace('{{item_barcode}}', $item_barcode , $xml);
@@ -122,6 +122,7 @@ class NCIP_Staff_Service extends OCLC_Service {
 
   public function checkin_barcode($barcode) {
     //WMS_NCIP
+    //gets the ncip xml template for checking in items, fills in the barcode and send the resulting xml to the API
     $xml = file_get_contents(__DIR__.'/ncip_templates/checkin_request_template.xml');
     $xml = str_replace('{{barcode}}', $barcode , $xml);
     //file_put_contents('test.xml',$xml);

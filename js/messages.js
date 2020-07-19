@@ -1,5 +1,5 @@
 m = {
-  lib_card:        'Please scan library card. 090037604',
+  lib_card:        'Please scan library card.',
   lib_card_code :  'Barcode: {{0}}, Name: {{1}}',
   lib_card_fail:   "Checkout not permitted on card number '{{0}}', please check out at the desk.",
   item:            'Please scan an item.',

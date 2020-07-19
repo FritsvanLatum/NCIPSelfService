@@ -2,22 +2,28 @@ var debug = true;
 
 jQuery(document).ready(function() {
 
-  // Variable to keep the barcode when scanned. When we scan each
-  // character is a keypress and hence we push it onto the array. Later we check
-  // the length and final char to ensure it is a carriage return - ascii code 13
-  // this will tell us if it is a scan or just someone writing on the keyboard
+  // Variable to keep the barcode characters when scanned. When we scan each
+  // character is a keypress and hence we push it onto the array. 
   var chars = [];
-  var checkout_state = 'patron';
-  var patron_barcode = '';
-  jQuery("#dialog").append(message('lib_card',[]));
-  jQuery('#wait').css( "visibility", "hidden" );
   
+  /* the 'states' are: 
+    'patron':     the member card has to be scanned
+    'first_item': the first item card has to be scanned
+    'next_item':  the next item card might be scanned, the done button is showed
+    'done':       all is scanned
+  */
+  var checkout_state = 'patron';
   //hide 'Done' button
   jQuery('#done').css( "display", "none" );
+  jQuery('#wait').css( "visibility", "hidden" );
+  
+  var patron_barcode = '';
+  //please scn the card:
+  jQuery("#dialog").append(message('lib_card',[]));
   
   //gets patron information after scanning the member card
   //uses IDM library and API via ajax call
-  //async: false is essential!
+  //async: false is essential, because the correct code is needed in the next ajax calls
   function patron(barcode) {
     jQuery('#wait').css( "visibility", "visible" );
     request = jQuery.ajax({
@@ -38,13 +44,14 @@ jQuery(document).ready(function() {
       if (debug) {console.log(textStatus, errorThrown)}
       checkout_state = 'done';
       jQuery('#results').append(message('lib_card_fail',[barcode]));
+      jQuery('#done').css( "display", "block" );
     });
     jQuery('#wait').css( "visibility", "hidden" );
   }
 
   //checks out the item and returns item information after scanning the item
   //uses NCIP library and API via ajax call
-  //async: false is essential!
+  //async: false is essential!?
   function item(patron_barcode, barcode) {
     jQuery('#wait').css( "visibility", "visible" );
     request = jQuery.ajax({
@@ -92,8 +99,8 @@ jQuery(document).ready(function() {
       switch (checkout_state) {
         case 'patron':
         //page starts in checkout_state 'patron', meaning the patron barcode must be scanned
-        patron_barcode = barcode;
         patron(barcode);
+        patron_barcode = barcode;
         //now the checkout_state is either 'first_item' or 'done'
         break;
 
@@ -101,7 +108,6 @@ jQuery(document).ready(function() {
         //page is in checkout_state 'first_item', meaning the first item must be scanned
         item(patron_barcode, barcode);
         //now the checkout_state is either 'next_item' or 'done'
-        
         //from now on the user is able to end the transaction by clicking the button 'Done'
         jQuery('#done').css( "display", "block" );
         break;

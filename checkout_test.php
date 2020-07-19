@@ -1,8 +1,15 @@
 <?php
-//for TWIG templating:
-require_once 'vendor/autoload.php';
-//for lookups in patron admin of WMS
-//require_once 'IDM_Service.php';
+/*  checkout_test.php
+/ webpage with input elements for member card barcode and item barcode
+/ for TESTing checkouts by library patrons
+/ shows response from the NCIP API on WMS 
+/ 
+/ in PRODUCTION use checkout.html (has no input fields)
+/
+/ script uses https://github.com/json-editor/json-editor
+/ for defining and handling forms
+*/
+
 //for lookups, holds, cancel holds and renewal in WMS
 require_once 'php/NCIP_Staff_Service.php';
 
@@ -35,8 +42,11 @@ if (array_key_exists('user_barcode',$_GET) && array_key_exists('item_barcode',$_
     <script type="text/javascript" src="js/jsoneditor.min.js"></script>
     <script type="text/javascript" src="schema/checkout_oneSchema.js"></script>
     <script>
-      <?php if ($user_barcode) echo "user_barcode = '$user_barcode';" ?>
-      <?php if ($item_barcode) echo "item_barcode = '$item_barcode';" ?>
+    <?php 
+        //write little javascript for definitions of variables used in js/checkout_oneForm.js (form handling)
+        if ($user_barcode) echo "user_barcode = '$user_barcode';";
+        if ($item_barcode) echo "item_barcode = '$item_barcode';"; 
+    ?>
     </script>
   </head>
 

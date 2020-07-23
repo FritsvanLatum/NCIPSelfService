@@ -29,7 +29,7 @@ jQuery and libraries that interface with the API's are also provided in the repo
 #### Test version
 The application provides a test interface in index_test.php. This version uses HTML forms and gives feedback for debugging.
 
-[https://github.com/json-editor/json-editor](https://github.com/json-editor/json-editor) is used  for defining and handling forms.
+[https://github.com/json-editor/json-editor](https://github.com/json-editor/json-editor) is used for defining and handling forms.
 
 The essential files of the test version are:
 * `index.html`
@@ -44,4 +44,4 @@ The essential files of the test version are:
 ## Dependencies
 * This application must be installed in a [XAMP](https://www.apachefriends.org/index.html) (or LAMP, WAMP) environment.
 * The applications uses the [NCIP API](https://www.oclc.org/developer/develop/web-services/wms-ncip-service.en.html) and the [IDM API](https://www.oclc.org/developer/develop/web-services/worldshare-identity-management-api.en.html) of OCLC's [WMS](https://www.oclc.org/nl/worldshare-management-services.html).
-* In order to authenticate key files must be provided
+* In order to authenticate on the API's key files must be provided

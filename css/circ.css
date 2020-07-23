@@ -1,4 +1,4 @@
-body {
+/*body {
 	margin:10px;
 }
 
@@ -60,7 +60,9 @@ div.minimalistBlack {
 .valueC {width:80%;}
 
 /* DivTable.com */
+/*
 .divTable{ display: table; }
 .divTableRow { display: table-row; }
 .labelC, .valueC { display: table-cell;}
 .divTableBody { display: table-row-group;}
+*/
